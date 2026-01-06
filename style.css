@@ -11,13 +11,14 @@
     font-style: normal;
 }
 
+
 .atkinson-hyperlegible-mono-regular {
 font-family: "Atkinson Hyperlegible Mono", serif;
 font-optical-sizing: auto;
 font-weight: 500;
 font-style: normal;
 }
-
+  
 
 * {
     margin: 0px;
@@ -27,7 +28,6 @@ font-style: normal;
 
 body {
     font-family: 'Inter', sans-serif, Arial;
-    background: #FAFAFA;
 }
 
 .hero {
@@ -123,103 +123,16 @@ body {
     text-align: right;
 }
 
-/* -------------------- */
-
-.aboutme{
+.introdiv {
+    height: 100vh;
     color: black;
-    background: #FAFAFA;
-    /* display: grid;
-    grid-template-areas: 'myArea myArea . . .'; */
+    background: rgb(252, 252, 252);
 }
 
-.stickyparent{
-    height: 787.5vh;
+.introdiv h1 {
+    padding-top: 18.75rem;
+    text-align: center;
 }
-
-.sticky{
-    overflow: hidden;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-}
-
-.sticky .topleftcorner{
-    position: absolute;
-    left: 0.75rem;
-    top: 0.75rem;
-}
-
-.sticky .bottomrightcorner{
-    position: absolute;
-    right: 0.75rem;
-    bottom: 0.75rem;
-}
-
-.scrollsection{
-    left: 25%;
-    top: 25%;
-    position: absolute;
-    height: 50%;
-    width: 250vw;
-    will-change: transform;
-    display:flex;
-    justify-content: space-between;
-    align-items: center;
-
-}
-
-.scrollsection p{
-    font-size: 2.5em;
-    width:50rem;
-}
-
-.scrollsection h1{
-    font-size:1.5em;
-    background: -webkit-radial-gradient(rgb(83, 83, 83), rgb(0, 0, 0));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.topleftcorner{
-    position: sticky;
-}
-
-/* ----------------------------- */
-
-.display{
-    background-color: black;
-    color:white;
-    background-image: url("images/display.png");
-
-    /* Create the parallax scrolling effect */
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    
-}
-
-.displayparent{
-    height: 250vh;
-}
-
-.displaytext{
-    overflow: hidden;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    border: thick solid red;
-}
-
-
-
-@media only screen and (max-width: 600px) {
-
-}
-
-/* #item1{
-    grid-area: 'myArea';
-} */
 
 /* CODE FOR RESUME BUTTON
  .downloadres{
