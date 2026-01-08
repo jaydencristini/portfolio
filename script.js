@@ -185,4 +185,103 @@
   onScrollOrResize();
 })();
 
+(() => {
+  const cards = Array.from(document.querySelectorAll("[data-project]"));
+  const drawer = document.getElementById("project-drawer");
+  const drawerTitle = document.getElementById("project-drawer-title");
+  const drawerBody = document.getElementById("project-drawer-body");
+  const closeBtn = drawer?.querySelector(".project-drawer-close");
 
+  if (!cards.length || !drawer || !drawerTitle || !drawerBody || !closeBtn)
+    return;
+
+  let activeCard = null;
+
+  const clearActiveStates = () => {
+    cards.forEach((c) => {
+      c.dataset.active = "false";
+      const btn = c.querySelector(".project-header");
+      if (btn) btn.setAttribute("aria-expanded", "false");
+    });
+  };
+
+  const closeDrawer = () => {
+    clearActiveStates();
+    activeCard = null;
+
+    drawerBody.innerHTML = "";
+    drawerTitle.textContent = "";
+    drawer.hidden = true;
+  };
+
+  const openDrawerFor = (card) => {
+    const btn = card.querySelector(".project-header");
+    const template = card.querySelector(".project-template");
+
+    if (!btn || !template) return;
+
+    // If clicking the same active card: toggle close
+    if (activeCard === card && drawer.hidden === false) {
+      closeDrawer();
+      return;
+    }
+
+    clearActiveStates();
+    activeCard = card;
+
+    // Mark active
+    card.dataset.active = "true";
+    btn.setAttribute("aria-expanded", "true");
+
+    // Populate drawer
+    const titleEl = card.querySelector("h3");
+    drawerTitle.textContent = titleEl ? titleEl.textContent.trim() : "Project";
+
+    drawerBody.innerHTML = "";
+    drawerBody.appendChild(template.content.cloneNode(true));
+
+    // Show drawer (below all cards because it's the last grid child)
+    drawer.hidden = false;
+
+    // Smoothly bring drawer into view (not too jumpy)
+    const y = drawer.getBoundingClientRect().top + window.scrollY - 90;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  };
+
+  // Bind card clicks
+  // Bind card clicks (single, reliable handler)
+  cards.forEach((card) => {
+    const btn = card.querySelector(".project-header");
+    if (!btn) return;
+
+    card.dataset.active = "false";
+    btn.setAttribute("aria-expanded", "false");
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openDrawerFor(card);
+    });
+
+    btn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openDrawerFor(card);
+      }
+    });
+  });
+
+  // Close controls
+  closeBtn.addEventListener("click", closeDrawer);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !drawer.hidden) closeDrawer();
+  });
+
+  // Optional: click outside drawer to close (very clean UX)
+  document.addEventListener("click", (e) => {
+    if (drawer.hidden) return;
+    const isClickInsideDrawer = drawer.contains(e.target);
+    const isClickOnCard = cards.some((c) => c.contains(e.target));
+    if (!isClickInsideDrawer && !isClickOnCard) closeDrawer();
+  });
+})();

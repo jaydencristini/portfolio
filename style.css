@@ -20,7 +20,10 @@ body {
 }
 
 /* Prevent anchor jumps from hiding headings under the fixed navbar */
-#home, #about, #projects, #contact {
+#home,
+#about,
+#projects,
+#contact {
   scroll-margin-top: 90px;
 }
 
@@ -222,8 +225,6 @@ nav a[aria-current="page"]::after {
   font-size: clamp(1rem, 3.2vw, 1.1rem);
 }
 
-
-
 /* ---------- ABOUT ME EFFECTS ---------- */
 #about {
   margin-top: 4rem;
@@ -418,10 +419,6 @@ nav a[aria-current="page"]::after {
   position: relative;
 }
 
-.projects .card {
-  cursor: pointer;
-}
-
 .card::after {
   content: "→";
   position: absolute;
@@ -430,6 +427,12 @@ nav a[aria-current="page"]::after {
   opacity: 0;
   transform: translateX(-5px);
   transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Fix "dead click zones" caused by the decorative pseudo-element overlay */
+.card::before,
+.card::after {
+  pointer-events: none;
 }
 
 /* Keep hover effects, but don’t rely on them for mobile */
@@ -605,4 +608,336 @@ footer a {
   footer a {
     color: inherit;
   }
+}
+
+/* =========================
+   Inline Project Expansion
+========================= */
+
+.project-header {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+
+.project-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.project-badge {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.project-summary {
+  margin-top: 0.5rem;
+  opacity: 0.85;
+}
+
+.project.card {
+  overflow: hidden;
+}
+
+/* Chevron */
+.project.card::after {
+  content: "⌄";
+  opacity: 0.55;
+  transform: translateX(0) rotate(0deg);
+  pointer-events: none;
+}
+
+/* Open state */
+.project[data-open="true"] {
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.12);
+}
+
+.project[data-open="true"]::after {
+  opacity: 0.8;
+  transform: translateX(0) rotate(180deg);
+}
+
+/* Panel animation */
+.project-panel {
+  max-height: 0px;
+  opacity: 0;
+  transition: max-height 380ms ease, opacity 220ms ease;
+}
+
+.project[data-open="true"] .project-panel {
+  opacity: 1;
+}
+
+.project-details {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.project-details h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.01em;
+}
+
+.project-details ul {
+  padding-left: 1.1rem;
+  opacity: 0.9;
+}
+
+.project-details p {
+  opacity: 0.9;
+}
+
+.project-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Simple buttons that match your minimal vibe */
+.btn {
+  display: inline-block;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.9rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.btn-ghost {
+  background: transparent;
+}
+
+/* Mobile layout */
+@media (max-width: 700px) {
+  .project-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dark mode touch-ups (to match your existing dark scheme) */
+@media (prefers-color-scheme: dark) {
+  .project-badge,
+  .btn {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .project-details {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .project-panel {
+    transition: none;
+  }
+}
+
+/* =========================
+   Project Drawer (full-width)
+========================= */
+
+.project-header {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+  z-index: 100;
+}
+
+
+.project-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.project-badge {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  border: 1px solid rgba(0,0,0,0.12);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.project-summary {
+  margin-top: 0.5rem;
+  opacity: 0.85;
+}
+
+/* Active card subtle emphasis */
+.project[data-active="true"] {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.12);
+}
+
+/* Drawer spans full grid width */
+.project-drawer {
+  grid-column: 1 / -1;
+  margin-top: 0.25rem;
+}
+
+.project-drawer-inner {
+  background: white;
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.10);
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.project-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.project-drawer-head h3 {
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+}
+
+.project-drawer-close {
+  appearance: none;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: transparent;
+  border-radius: 0.9rem;
+  padding: 0.5rem 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.project-drawer-close:hover {
+  opacity: 0.8;
+}
+
+/* The injected details layout */
+.project-details {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0,0,0,0.08);
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.project-details h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.project-details ul {
+  padding-left: 1.1rem;
+  opacity: 0.9;
+}
+
+.project-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.9rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.btn-ghost {
+  background: transparent;
+}
+
+@media (max-width: 700px) {
+  .project-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dark mode matches your current theme */
+@media (prefers-color-scheme: dark) {
+  .project-badge,
+  .project-drawer-close,
+  .btn {
+    border: 1px solid rgba(255,255,255,0.14);
+  }
+
+  .project-drawer-inner {
+    background: #12141a;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.55);
+  }
+
+  .project-details {
+    border-top: 1px solid rgba(255,255,255,0.10);
+  }
+}
+
+/* =========================
+   FIX: make the entire project card clickable
+   (remove card padding, move it to the button)
+========================= */
+.projects .card.project {
+  padding: 0 !important;      /* kills the dead padded click zones */
+  cursor: default;            /* optional: cursor handled by button */
+}
+
+.projects .card.project > .project-header {
+  display: block;
+  width: 100%;
+  padding: clamp(1.25rem, 4vw, 2rem); /* same padding the card used to have */
+  border-radius: inherit;
+  text-align: left;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+/* Keep the decorative arrow/chevron from ever blocking clicks */
+.projects .card.project::before,
+.projects .card.project::after {
+  pointer-events: none;
+}
+
+/* Fix: make the button fill the entire card height (prevents dead space at bottom) */
+.projects .card.project {
+  display: flex;              /* allow child to stretch */
+}
+
+.projects .card.project > .project-header {
+  flex: 1;                    /* fill remaining height */
+  min-height: 100%;
+  align-self: stretch;
 }
