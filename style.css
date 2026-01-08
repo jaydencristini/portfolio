@@ -19,10 +19,23 @@ body {
   overflow-x: hidden;
 }
 
+:root {
+  --corner-offset: 1.5rem;
+}
+
 /* ---------- ALT BACKGROUND ---------- */
 .alt-background {
   background: linear-gradient(180deg, #fafafa, #f3f3f3);
   padding: 6rem 0;
+}
+
+/* ---------- CURSOR FEEDBACK ---------- */
+a {
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.7;
 }
 
 /* ---------- NAV ---------- */
@@ -145,6 +158,8 @@ nav a:hover::after {
   opacity: 0;
   transform: translateY(40px);
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  position: relative;
+  padding-top: 0.25rem;
 }
 
 .about-section.visible {
@@ -195,6 +210,102 @@ nav a:hover::after {
   font-size: 1.1rem;
   opacity: 0.75;
   max-width: 700px;
+}
+
+/* ---------- ANIMATED CORNER BORDERS ---------- */
+/* Shared corner styles */
+.about-section .corner-tl,
+.about-section .corner-br {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+}
+
+/* Top-left corner */
+.about-section .corner-tl {
+  top: 0;
+  left: 0;
+  transform: translate(
+    calc(-1 * var(--corner-offset)),
+    calc(-1 * var(--corner-offset) * 1.15)
+  );
+}
+
+/* Bottom-right corner */
+.about-section .corner-br {
+  bottom: 0;
+  right: 0;
+  transform: translate(
+    var(--corner-offset),
+    calc(var(--corner-offset) * 0.85)
+  );
+}
+
+/* Horizontal stroke */
+.corner-line-h {
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  transform: scaleX(0);
+}
+
+/* Vertical stroke */
+.corner-line-v {
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  transform: scaleY(0);
+}
+
+/* Top-left strokes */
+.corner-tl .corner-line-h {
+  top: 0;
+  left: 0;
+  transform-origin: right center;
+}
+
+.corner-tl .corner-line-v {
+  top: 0;
+  left: 0;
+  transform-origin: center bottom;
+}
+
+/* Bottom-right strokes */
+.corner-br .corner-line-h {
+  bottom: 0;
+  right: 0;
+  transform-origin: left center;
+}
+
+.corner-br .corner-line-v {
+  bottom: 0;
+  right: 0;
+  transform-origin: center top;
+}
+
+/* Animate when visible */
+.about-section.visible .corner-line-h {
+  animation: draw-h 0.8s ease-out forwards;
+}
+
+.about-section.visible .corner-line-v {
+  animation: draw-v 0.8s ease-out forwards;
+}
+
+/* Keyframes */
+@keyframes draw-h {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes draw-v {
+  to {
+    transform: scaleY(1);
+  }
 }
 
 /* ---------- SECTION DIVIDER ---------- */
@@ -281,6 +392,10 @@ footer a {
 
 /* ---------- MOBILE ---------- */
 @media (max-width: 600px) {
+  :root {
+    --corner-offset: 1rem;
+  }
+
   nav {
     gap: 1.5rem;
   }
@@ -288,4 +403,25 @@ footer a {
   .info {
     margin-top: -2rem;
   }
+
+  /* Scale down About section corner borders */
+  .about-section .corner-tl,
+  .about-section .corner-br {
+    width: 50px;
+    height: 50px;
+  }
+
+  .about-section .corner-tl {
+    top: -1rem;
+    left: -1rem;
+  }
+
+  .about-section .corner-br {
+    bottom: -1rem;
+    right: -1rem;
+  }
 }
+
+
+
+
