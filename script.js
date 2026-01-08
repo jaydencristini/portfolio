@@ -195,7 +195,23 @@
   if (!cards.length || !drawer || !drawerTitle || !drawerBody || !closeBtn)
     return;
 
+  const projectsGrid = drawer.parentElement; // .projects
+  const mobileMQ = window.matchMedia("(max-width: 700px)");
+
   let activeCard = null;
+
+  const dockDrawer = () => {
+    if (!projectsGrid) return;
+
+    // On mobile: put the drawer right after the active card
+    if (mobileMQ.matches && activeCard) {
+      activeCard.after(drawer);
+      return;
+    }
+
+    // On desktop: keep it as the last child so it's full-width below the grid
+    projectsGrid.appendChild(drawer);
+  };
 
   const clearActiveStates = () => {
     cards.forEach((c) => {
@@ -211,7 +227,11 @@
 
     drawerBody.innerHTML = "";
     drawerTitle.textContent = "";
+
+    dockDrawer();
     drawer.hidden = true;
+
+    drawer.classList.remove("drawer-visible");
   };
 
   const openDrawerFor = (card) => {
@@ -240,8 +260,16 @@
     drawerBody.innerHTML = "";
     drawerBody.appendChild(template.content.cloneNode(true));
 
-    // Show drawer (below all cards because it's the last grid child)
+    // Put drawer where it should live for this viewport
+    dockDrawer();
+
+    // Show drawer
     drawer.hidden = false;
+
+    // Allow CSS to apply before animating (prevents snap-in)
+    requestAnimationFrame(() => {
+      drawer.classList.add("drawer-visible");
+    });
 
     // Smoothly bring drawer into view (not too jumpy)
     const y = drawer.getBoundingClientRect().top + window.scrollY - 90;
@@ -283,5 +311,9 @@
     const isClickInsideDrawer = drawer.contains(e.target);
     const isClickOnCard = cards.some((c) => c.contains(e.target));
     if (!isClickInsideDrawer && !isClickOnCard) closeDrawer();
+  });
+
+  mobileMQ.addEventListener("change", () => {
+    if (!drawer.hidden) dockDrawer();
   });
 })();
