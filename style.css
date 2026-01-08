@@ -19,21 +19,36 @@ body {
   overflow-x: hidden;
 }
 
+/* Prevent anchor jumps from hiding headings under the fixed navbar */
+#home, #about, #projects, #contact {
+  scroll-margin-top: 90px;
+}
+
+/* ---------- TOKENS ---------- */
 :root {
-  --corner-offset: 1.5rem;
+  --max-width: 1100px;
+
+  /* Spacing scales nicely across devices */
+  --pad-x: clamp(1rem, 4vw, 2rem);
+  --section-y: clamp(3rem, 8vw, 6rem);
+
+  /* Corner border spacing scales, too */
+  --corner-offset: clamp(0.9rem, 2.5vw, 1.5rem);
+
+  /* Nav sizing */
+  --nav-h: 64px;
 }
 
 /* ---------- ALT BACKGROUND ---------- */
 .alt-background {
   background: linear-gradient(180deg, #fafafa, #f3f3f3);
-  padding: 6rem 0;
+  padding: clamp(3rem, 8vw, 6rem) 0;
 }
 
 /* ---------- CURSOR FEEDBACK ---------- */
 a {
   transition: opacity 0.2s ease;
 }
-
 a:hover {
   opacity: 0.7;
 }
@@ -42,41 +57,66 @@ a:hover {
 nav {
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
-  height: 64px;
+  min-height: 64px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 7rem;
-  background: rgba(250, 250, 250, 0.8);
+
+  /* responsive spacing so it won't overflow on mobile */
+  gap: clamp(1rem, 6vw, 3.5rem);
+  padding: 0 clamp(1rem, 4vw, 2rem);
+
+  background: rgba(250, 250, 250, 0.82);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   z-index: 100;
-  border-bottom-left-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
+
+/* allow wrapping on tiny screens instead of horizontal overflow */
+@media (max-width: 420px) {
+  nav {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0.75rem clamp(1rem, 4vw, 2rem);
+  }
 }
 
 nav a {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #111;
   position: relative;
   text-decoration: none;
+  white-space: nowrap;
+  padding: 0.25rem 0;
 }
 
 nav a::after {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -4px;
+  bottom: -1px;
   width: 0;
   height: 2px;
-  background: #111;
-  transition: width 0.3s ease;
+  background: currentColor;
+  opacity: 0.9;
+  transition: width 0.28s ease, opacity 0.28s ease;
 }
 
 nav a:hover::after {
   width: 100%;
+  opacity: 0.65;
+}
+
+/* Active section indicator */
+nav a.active::after,
+nav a[aria-current="page"]::after {
+  width: 100%;
+  opacity: 1;
 }
 
 /* ---------- SCROLL PROGRESS ---------- */
@@ -92,35 +132,50 @@ nav a:hover::after {
 
 /* ---------- HERO ---------- */
 .hero {
-  min-height: 100vh;
+  /* svh avoids mobile browser UI resizing issues */
+  min-height: 100svh;
   display: grid;
   place-items: center;
-  padding: 6rem 2rem 4rem;
+
+  /* add top padding so nav never overlaps */
+  padding: calc(var(--section-y) + var(--nav-h)) var(--pad-x) var(--section-y);
+
   text-align: center;
-  background: url("images/titlescreen.jpg") center / cover no-repeat fixed;
+  background: url("images/titlescreen.jpg") center / cover no-repeat;
+  background-attachment: fixed;
+}
+
+/* Disable fixed background on mobile for better performance */
+@media (max-width: 900px) {
+  .hero {
+    background-attachment: scroll;
+  }
 }
 
 .hero h1 {
-  font-size: clamp(3rem, 4.5rem, 6rem);
+  /* This actually scales with viewport width */
+  font-size: clamp(2.2rem, 7vw, 4rem);
   font-weight: 700;
-  margin-bottom: 2.5rem;
+  margin-bottom: clamp(1rem, 4vw, 2.5rem);
   line-height: 1.1;
 }
 
 .hero p {
-  max-width: 700px;
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  max-width: 42rem;
+  font-size: clamp(1rem, 3.5vw, 1.25rem);
   opacity: 0.9;
 }
 
 /* ---------- INFO ---------- */
 .info {
-  max-width: 1000px;
-  margin: -4rem auto 6rem;
-  padding: 2rem;
+  max-width: min(1000px, calc(100% - (2 * var(--pad-x))));
+  margin: clamp(-3rem, -5vw, -2rem) auto var(--section-y);
+  padding: clamp(1.25rem, 4vw, 2rem);
+
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
+  gap: clamp(1rem, 4vw, 2rem);
+
   background: white;
   border-radius: 1.5rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
@@ -134,30 +189,56 @@ nav a:hover::after {
   margin-bottom: 0.25rem;
 }
 
+/* On narrow phones: stack info in 1 column */
+@media (max-width: 600px) {
+  .info {
+    grid-template-columns: 1fr;
+    margin: -1.25rem auto var(--section-y);
+  }
+}
+
 /* ---------- CONTENT ---------- */
 .content {
-  max-width: 1100px;
-  margin: 0 auto 8rem;
-  padding: 0 2rem;
-  padding-bottom: min(10vh, 5rem);
+  max-width: min(var(--max-width), calc(100% - (2 * var(--pad-x))));
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+  padding-bottom: min(12vh, 6rem);
+}
+
+@media (max-width: 600px) {
+  .content {
+    padding-bottom: 3rem;
+  }
 }
 
 .content h2 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  margin-bottom: 1.25rem;
   line-height: 1.2;
 }
 
 .content p {
-  max-width: 800px;
-  font-size: 1.05rem;
+  max-width: 52rem;
+  font-size: clamp(1rem, 3.2vw, 1.1rem);
 }
 
+
+
 /* ---------- ABOUT ME EFFECTS ---------- */
+#about {
+  margin-top: 4rem;
+}
+
+@media (max-width: 600px) {
+  #about {
+    padding-bottom: 0.5rem;
+  }
+}
+
 .about-section {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
   position: relative;
   padding-top: 0.25rem;
 }
@@ -168,8 +249,8 @@ nav a:hover::after {
 }
 
 .about-title {
-  font-size: clamp(2rem, 4vw, 2.5rem);
-  margin-bottom: 1.5rem;
+  font-size: clamp(1.9rem, 5vw, 2.5rem);
+  margin-bottom: 1.25rem;
   position: relative;
 }
 
@@ -184,12 +265,12 @@ nav a:hover::after {
 }
 
 .about-highlight {
-  margin-top: 2.5rem;
-  font-size: 1.15rem;
+  margin-top: 2rem;
+  font-size: clamp(1.05rem, 3.6vw, 1.15rem);
   font-weight: 500;
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.8s ease;
+  transform: translateY(18px);
+  transition: all 0.7s ease;
 }
 
 .about-section.visible .about-highlight {
@@ -198,27 +279,27 @@ nav a:hover::after {
 }
 
 .about-text {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 3.5vw, 1.1rem);
   line-height: 1.75;
-  max-width: 750px;
+  max-width: 46rem;
   letter-spacing: 0.01em;
+  padding-top: 0.75rem;
 }
 
 .philosophy {
-  margin-top: 3rem;
+  margin-top: 2.25rem;
   font-style: italic;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 3.5vw, 1.1rem);
   opacity: 0.75;
-  max-width: 700px;
+  max-width: 44rem;
 }
 
 /* ---------- ANIMATED CORNER BORDERS ---------- */
-/* Shared corner styles */
 .about-section .corner-tl,
 .about-section .corner-br {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: clamp(48px, 12vw, 80px);
+  height: clamp(48px, 12vw, 80px);
   pointer-events: none;
 }
 
@@ -226,23 +307,16 @@ nav a:hover::after {
 .about-section .corner-tl {
   top: 0;
   left: 0;
-  transform: translate(
-    calc(-1 * var(--corner-offset)),
-    calc(-1 * var(--corner-offset) * 1.15)
-  );
+  transform: translate(-100%, -100%);
 }
 
 /* Bottom-right corner */
 .about-section .corner-br {
   bottom: 0;
   right: 0;
-  transform: translate(
-    var(--corner-offset),
-    calc(var(--corner-offset) * 0.85)
-  );
+  transform: translate(50%, 0);
 }
 
-/* Horizontal stroke */
 .corner-line-h {
   position: absolute;
   height: 2px;
@@ -251,7 +325,6 @@ nav a:hover::after {
   transform: scaleX(0);
 }
 
-/* Vertical stroke */
 .corner-line-v {
   position: absolute;
   width: 2px;
@@ -260,7 +333,6 @@ nav a:hover::after {
   transform: scaleY(0);
 }
 
-/* Top-left strokes */
 .corner-tl .corner-line-h {
   top: 0;
   left: 0;
@@ -273,7 +345,6 @@ nav a:hover::after {
   transform-origin: center bottom;
 }
 
-/* Bottom-right strokes */
 .corner-br .corner-line-h {
   bottom: 0;
   right: 0;
@@ -286,7 +357,6 @@ nav a:hover::after {
   transform-origin: center top;
 }
 
-/* Animate when visible */
 .about-section.visible .corner-line-h {
   animation: draw-h 0.8s ease-out forwards;
 }
@@ -295,7 +365,6 @@ nav a:hover::after {
   animation: draw-v 0.8s ease-out forwards;
 }
 
-/* Keyframes */
 @keyframes draw-h {
   to {
     transform: scaleX(1);
@@ -308,9 +377,16 @@ nav a:hover::after {
   }
 }
 
+@media (max-width: 600px) {
+  .about-section .corner-tl,
+  .about-section .corner-br {
+    display: none;
+  }
+}
+
 /* ---------- SECTION DIVIDER ---------- */
 .section-divider {
-  margin: 6rem auto;
+  margin: calc(var(--section-y) / 2) auto calc(var(--section-y) / 2);
   width: 60px;
   height: 3px;
   background: linear-gradient(90deg, transparent, #111, transparent);
@@ -318,46 +394,54 @@ nav a:hover::after {
 
 /* ---------- PROJECTS ---------- */
 .section-intro {
-  max-width: 700px;
-  margin-bottom: 2.5rem;
+  max-width: 44rem;
   opacity: 0.75;
-  font-size: 1.05rem;
+  font-size: clamp(1rem, 3.2vw, 1.05rem);
 }
 
 .projects {
-  margin-top: 3rem;
+  margin-top: 2rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
+
+  /* Prevent overflow on narrow devices */
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+
+  gap: clamp(1rem, 4vw, 2rem);
 }
 
 .card {
   background: white;
-  padding: 2rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
   border-radius: 1.25rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
 }
 
+.projects .card {
+  cursor: pointer;
+}
+
 .card::after {
   content: "→";
   position: absolute;
-  bottom: 1.5rem;
-  right: 1.5rem;
+  bottom: 1.25rem;
+  right: 1.25rem;
   opacity: 0;
   transform: translateX(-5px);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.12);
-}
-
-.card:hover::after {
-  opacity: 0.6;
-  transform: translateX(0);
+/* Keep hover effects, but don’t rely on them for mobile */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.12);
+  }
+  .card:hover::after {
+    opacity: 0.6;
+    transform: translateX(0);
+  }
 }
 
 .card h3 {
@@ -373,7 +457,7 @@ nav a:hover::after {
 
 /* ---------- FOOTER ---------- */
 footer {
-  padding: 4rem 2rem;
+  padding: calc(var(--section-y) / 2) var(--pad-x);
   text-align: center;
   background: #111;
   color: #fafafa;
@@ -390,38 +474,135 @@ footer a {
   text-underline-offset: 3px;
 }
 
-/* ---------- MOBILE ---------- */
+/* ---------- MOBILE-SPECIFIC TWEAKS ---------- */
 @media (max-width: 600px) {
+  /* keep corners from hugging edges too tightly */
   :root {
     --corner-offset: 1rem;
   }
 
-  nav {
-    gap: 1.5rem;
-  }
-
-  .info {
-    margin-top: -2rem;
-  }
-
-  /* Scale down About section corner borders */
-  .about-section .corner-tl,
-  .about-section .corner-br {
-    width: 50px;
-    height: 50px;
-  }
-
-  .about-section .corner-tl {
-    top: -1rem;
-    left: -1rem;
-  }
-
-  .about-section .corner-br {
-    bottom: -1rem;
-    right: -1rem;
+  .about-title::after {
+    width: 3rem;
   }
 }
 
+/* =====================
+   AUTO DARK MODE (system preference)
+===================== */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #0b0c0f;
+    color: #f2f4f8;
+  }
 
+  /* Nav */
+  nav {
+    background: rgba(11, 12, 15, 0.75);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
 
+  nav a {
+    color: #f2f4f8;
+  }
 
+  nav a::after {
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  /* Scroll progress */
+  #scroll-progress {
+    background: linear-gradient(90deg, #f2f4f8, rgba(242, 244, 248, 0.35));
+  }
+
+  .hero h1 {
+    color: #e6e9ef;
+  }
+
+  .hero p {
+    color: #eef2fa;
+  }
+
+  /* Hero text can get lost on bright images */
+  .hero h1,
+  .hero p {
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+  }
+
+  .hero {
+    position: relative;
+    isolation: isolate; /* ensures overlay layers correctly */
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.55),
+      rgba(0, 0, 0, 0.25)
+    );
+    z-index: 0;
+  }
+
+  .hero > * {
+    position: relative;
+    z-index: 1; /* keeps text above overlay */
+  }
+
+  /* Cards / surfaces */
+  .info {
+    position: relative;
+    z-index: 5;
+  }
+
+  .info,
+  .card {
+    background: #12141a;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  }
+
+  .info span,
+  .tech,
+  .section-intro {
+    opacity: 0.75; /* readable but still secondary */
+  }
+
+  /* About underline + dividers */
+  .about-title::after {
+    background: linear-gradient(90deg, #f2f4f8, rgba(242, 244, 248, 0.2));
+  }
+
+  .section-divider {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(242, 244, 248, 0.85),
+      transparent
+    );
+  }
+
+  /* About corner borders */
+  .corner-line-h,
+  .corner-line-v {
+    background: rgba(242, 244, 248, 0.65);
+  }
+
+  /* Footer: keep it dark but soften contrast slightly */
+  footer {
+    /* subtle separation */
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+    /* soft glow edge */
+    box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  footer p {
+    opacity: 0.8;
+  }
+
+  footer a {
+    color: inherit;
+  }
+}
