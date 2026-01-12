@@ -881,10 +881,6 @@ footer a {
   opacity: 0.8;
 }
 
-.btn-ghost {
-  background: transparent;
-}
-
 /* Dark mode matches your current theme */
 @media (prefers-color-scheme: dark) {
   .project-badge,
