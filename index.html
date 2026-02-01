@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -183,7 +183,10 @@
                 <h4>Highlights</h4>
                 <ul>
                   <li>AI driven two-week forecast</li>
-                  <li>Interactive concentration map of various pollutants accross North America</li>
+                  <li>
+                    Interactive concentration map of various pollutants accross
+                    North America
+                  </li>
                   <li>Simple, user friendly UI</li>
                 </ul>
               </div>
@@ -205,11 +208,12 @@
         <article class="card project" data-project>
           <button class="project-header" type="button" aria-expanded="false">
             <div class="project-top">
-              <h3>Student Timetable Creation</h3>
+              <h3>Student Timetable Creation System</h3>
             </div>
 
             <p class="project-summary">
-              Create student timetables based on course selection, availability, and current grade.
+              Create student timetables based on course selection, availability,
+              and current year standing.
             </p>
 
             <span class="tech">Java</span>
@@ -218,20 +222,31 @@
           <template class="project-template">
             <div class="project-details">
               <div class="project-col">
-                <h4>Approach</h4>
+                <h4>Problem</h4>
                 <ul>
-                  <li>Baseline first → then improved model</li>
-                  <li>Validation strategy (train/test split, CV, etc.)</li>
-                  <li>What you’d change next</li>
+                  <li>
+                    Data is read in through a CSV file containing all student
+                    course requests, student numbers, and current year standing.
+                  </li>
+                  <li>
+                    Once data is read in, paths for different timetables are
+                    recursively searched and given priority based on how many
+                    students are satisfied.
+                  </li>
+                  <li>
+                    Once all timetables are generated, the one that grants the
+                    highest satisfaction among the students is selected to be
+                    their current timetable.
+                  </li>
                 </ul>
               </div>
 
               <div class="project-col">
-                <h4>Notes</h4>
-                <p>
-                  Use this space to show judgment: limitations, assumptions, and
-                  responsible interpretation.
-                </p>
+                <h4>Highlights</h4>
+                <ul>
+                  <li>Recursive path creation and backtracking algorithm.</li>
+                  <li>Optimised for maximum student satisfaction.</li>
+                  <li>Allows for large number of students to be processed efficiently.</li>
               </div>
 
               <div class="project-actions">
